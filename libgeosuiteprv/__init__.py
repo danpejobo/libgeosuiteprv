@@ -43,7 +43,7 @@ def parse(input_filename, borehole_id=None):
             break
         tube = values[0]
         data_str = values[1:12]
-        data_num = np.array(data_str, dtype=np.float)
+        data_num = np.array(data_str, dtype=np.float64)
         comments = ' '.join(values[12:])
         data_series = pd.Series([tube]+list(data_num))
         df = df.append(pd.Series(data_series), ignore_index=True)
