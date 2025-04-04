@@ -42,8 +42,12 @@ def parse(input_filename, borehole_id=None):
     for l in lines[2:-1]:
         values = l[:-1].split()
         cleaned = [np.nan if v == '?' else v for v in values[1:12]]
-        if l[0]=='*':
-            break
+        try:
+            if l[0]=='*':
+                break
+        except IndexError:
+            logger.warning(f"Encountered empty or malformed line while checking for '*': '{l.strip()}'")
+            continue
         try:
             tube = values[0]
             data_num = np.array(cleaned, dtype=np.float64)
