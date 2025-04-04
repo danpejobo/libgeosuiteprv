@@ -31,11 +31,14 @@ def parse(input_filename, borehole_id=None):
         cleaned = [np.nan if v == '?' else v for v in values[1:12]]
         if l[0]=='*':
             break
-        tube = values[0]
-        data_num = np.array(cleaned, dtype=np.float64)
-        row = pd.Series([tube] + list(data_num))
-        rows.append(row)
-        comment_list.append(' '.join(values[12:]))
+        try:
+            tube = values[0]
+            data_num = np.array(cleaned, dtype=np.float64)
+            row = pd.Series([tube] + list(data_num))
+            rows.append(row)
+            comment_list.append(' '.join(values[12:]))
+        except Exception as e:
+            logger.warning(f"Failed to parse line: {l.strip()} — {e}")
     df = pd.concat([r.to_frame().T for r in rows], ignore_index=True)
 
     df = df.rename(columns={
