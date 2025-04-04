@@ -16,6 +16,7 @@ setuptools.setup(
     install_requires=[
         "numpy",
         "pandas",
+        "python-dateutil",
     ],
     entry_points = {
         'libsgfdata.parsers': ['prv=libgeosuiteprv:parse'],

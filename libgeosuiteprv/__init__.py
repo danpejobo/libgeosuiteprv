@@ -2,9 +2,22 @@ import numpy as np
 import pandas as pd
 import codecs
 import logging
+from dateutil import parser as dateparser
 
 logger = logging.getLogger(__name__)
 
+
+def parse_date(v):
+    try:
+        if len(v) >= 8:
+            return dateparser.isoparse(v).date()
+    except ValueError as exception:
+        logger.debug("Unable to parse date as ISO: %s (%s)", v, exception)
+    try:
+        return dateparser.parse(v, parserinfo=dateparser.parserinfo(dayfirst=True)).date()
+    except Exception as e:
+        logger.debug("Unable to parse date: %s (%s)", v, e)
+        return np.nan
 
 def parse(input_filename, borehole_id=None):
     if borehole_id is None:
@@ -21,7 +34,7 @@ def parse(input_filename, borehole_id=None):
 
     firstline_list = lines[0][:-1].split()
 
-    main = [{'date': pd.to_datetime(firstline_list[2], format='%d.%m.%Y') if firstline_list[2] != "-" else np.nan,
+    main = [{'date': parse_date(firstline_list[2]),
              "method_code": "core_sampling",
              "investigation_point": borehole_id
     }]
