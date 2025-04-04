@@ -36,20 +36,17 @@ def parse(input_filename, borehole_id=None):
     rows = []
     for l in lines[2:-1]:
         values = l[:-1].split()
-        if '?' in values:
-            index = values.index('?')
-            values[index] = 0
+        cleaned = [np.nan if v == '?' else v for v in values[1:12]]
         if l[0]=='*':
             break
         tube = values[0]
-        data_str = values[1:12]
-        data_num = np.array(data_str, dtype=np.float64)
+        data_num = np.array(cleaned, dtype=np.float64)
         row = pd.Series([tube] + list(data_num))
         rows.append(row)
         comment_list.append(' '.join(values[12:]))
     df = pd.concat([r.to_frame().T for r in rows], ignore_index=True)
 
-    df = df.replace(0,np.nan).rename(columns={
+    df = df.rename(columns={
         0:'tube',
         2:'depth',
         3:'water_content_%',
